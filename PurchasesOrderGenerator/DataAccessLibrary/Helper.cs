@@ -23,7 +23,7 @@ namespace DataAccessLibrary
 				var path = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
 				configurationBuilder.AddJsonFile(path, false);
 				var root = configurationBuilder.Build();
-				return root.GetSection("Sharepoint").GetSection(databaseConnection).Value;
+				return root.GetSection("ConnectionString").GetSection(databaseConnection).Value;
 			}
 			catch
 			{
