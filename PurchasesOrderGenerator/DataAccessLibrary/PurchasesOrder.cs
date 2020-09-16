@@ -105,6 +105,41 @@ namespace DataAccessLibrary
 				poDetails.Close();
 			}
 		}
+		/// <summary>
+		/// Get the Item Lines from an specific Purchases Order  to Draw the Item Lines Table into the PDF
+		/// </summary>
+		/// <param name="poNumber">string</param>
+		/// <returns>DataTable</returns>
+		public DataTable GetItemLines(string poNumber)
+		{
+
+			SqlConnection cnn = new SqlConnection(Helper.GetConnectionString("pemacDevDB"));
+			DataTable poLines = new DataTable();
+			try
+			{
+				using (cnn)
+				{
+					cnn.Open();
+					SqlCommand cmd = new SqlCommand(Helper.GetStoredProcedure("spGetPDFPOLines"), cnn);
+					cmd.CommandType = CommandType.StoredProcedure;
+					cmd.Parameters.AddWithValue("@PONumber", poNumber);
+
+					using (var da = new SqlDataAdapter(cmd))
+					{
+						da.Fill(poLines);
+					}
+				}
+				return poLines;
+			}
+			catch
+			{
+				return null;
+			}
+			finally
+			{
+				cnn.Close();
+			}
+		}
 
 	}
 }
