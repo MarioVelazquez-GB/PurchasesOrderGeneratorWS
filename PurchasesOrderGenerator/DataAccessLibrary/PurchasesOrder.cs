@@ -140,6 +140,41 @@ namespace DataAccessLibrary
 				cnn.Close();
 			}
 		}
+		/// <summary>
+		/// Get The Work Order Details
+		/// </summary>
+		/// <param name="poNumber">string</param>
+		/// <returns></returns>
+		public DataTable GetItemLinesWorkDetails(string poNumber)
+		{
+
+			SqlConnection cnn = new SqlConnection(Helper.GetConnectionString("pemacDevDB"));
+			DataTable poLinesWorkDetails = new DataTable();
+			try
+			{
+				using (cnn)
+				{
+					cnn.Open();
+					SqlCommand cmd = new SqlCommand(Helper.GetStoredProcedure("spGetPDFPOLinesWorkDetails"), cnn);
+					cmd.CommandType = CommandType.StoredProcedure;
+					cmd.Parameters.AddWithValue("@PONumber", poNumber);
+
+					using (var da = new SqlDataAdapter(cmd))
+					{
+						da.Fill(poLinesWorkDetails);
+					}
+				}
+				return poLinesWorkDetails;
+			}
+			catch
+			{
+				return null;
+			}
+			finally
+			{
+				cnn.Close();
+			}
+		}
 
 	}
 }
