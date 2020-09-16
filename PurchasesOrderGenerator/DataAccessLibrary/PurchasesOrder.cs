@@ -59,5 +59,52 @@ namespace DataAccessLibrary
                 cnn.Close();
             }
         }
-    }
+		/// <summary>
+		/// Populated the properties that we will use to draw the Header in the PDF
+		/// </summary>
+		/// <param name="poNumber">string</param>
+		/// <returns>PurchasesOrder</returns>
+		public PurchasesOrder GetPurchasesHeader(string poNumber)
+		{
+			PurchasesOrder po = new PurchasesOrder();
+			SqlConnection cnn = new SqlConnection(Helper.GetConnectionString("pemacDevDB"));
+			SqlDataReader poDetails = null;
+			try
+			{
+				using (cnn)
+				{
+					cnn.Open();
+					SqlCommand cmd = new SqlCommand(Helper.GetStoredProcedure("spGetPDFHeader"), cnn);
+					cmd.CommandType = CommandType.StoredProcedure;
+					cmd.Parameters.AddWithValue("@PONumber", poNumber);
+
+					using (poDetails = cmd.ExecuteReader())
+					{
+						foreach (DbDataRecord item in poDetails)
+						{
+							po.poNumber = item[0].ToString();
+							po.poDate = item[1].ToString();
+							po.poSupplier = item[2].ToString();
+							po.poSite = item[3].ToString();
+							po.poOriginator = item[4].ToString();
+							po.poTotalValue = item[5].ToString();
+							po.poComments = item[6].ToString();
+						}
+					}
+				}
+				return po;
+			}
+			catch
+			{
+				return po = null;
+			}
+			finally
+			{
+				cnn.Close();
+				po = null;
+				poDetails.Close();
+			}
+		}
+
+	}
 }
